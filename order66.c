@@ -39,7 +39,11 @@ void move(){
 }
 
 /*in one of BOT arguments we can put difficulty lvl
-that will be defined somewhere earlier, can be ignored though */
+that will be defined somewhere earlier, can be ignored though
+-this will be recursive function that repeats intelligenceBot times
+steps: 1. look for a maks amount of fish
+       2. look for a block with maks amount of ways 
+same with placement, scanning more and more blocks depend on intelligence lvl*/
 void placeBOT(int difficulty){
 
 }
@@ -63,7 +67,7 @@ int main(){
 
     boardInput();
 
-    int activePlayer, botOrNot;
+    int activePlayer, botOrNot, intelligenceBot;
     /*variables to distinguish penguins, should be a b c ... */
     char x,y;
 
@@ -74,7 +78,9 @@ int main(){
     scanf("%d", &botOrNot);
 
     if(botOrNot == 1){
-        goto noMoreQuestions;
+        printf("How smart is Your bot? (the bigger the better: <1,5>)");
+        scanf("%d", &intelligenceBot);
+        goto noMoreQuestions;        
     }
 
     printf("Board, penguins are marked with [], (your penguins are: [%d])\nChoose penguin you want to move: \n", activePlayer);
