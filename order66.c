@@ -49,8 +49,6 @@ int main(int argc, char** argv) {
     */
 
 
-	printf("Who's turn it is? \n(choose a number from 1 to %d) \n", players);
-	scanf("%d", &playerID);
 
 	/*0 player; 1-5 bot the bigger the smarter */
 	printf("Choose Bot lvl: \n(0 = I'm playing; 1-5 = pump that Bot up!) \n");
@@ -61,8 +59,13 @@ int main(int argc, char** argv) {
         goto NotBotBadInp;
 	}
 
+    spintowin:
+
+	printf("Who's turn it is? \n(choose a number from 1 to %d) \n", players);
+	scanf("%d", &playerID);
+
     PlaceTime = ppenguins - CountPeng(playerID);
-    printf("place time? %d", PlaceTime);
+    printf("Rounds to place pengs remaining: %d", PlaceTime);
 
 	if (NotBot == 0)
 		ShowInp();
@@ -71,10 +74,15 @@ int main(int argc, char** argv) {
     InpInput(NotBot, PlaceTime, input);
 
 
+
 	if (PlaceTime)
 		Place(input);
+		if(NotBot == 0)
+            goto spintowin;
 	else
 		Move(input);
+
+
 
 	Exit("./output.txt");
 
