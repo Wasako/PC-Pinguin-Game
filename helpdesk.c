@@ -137,12 +137,13 @@ void ShowInp(){
 
 		for (i = 0; i < column; i++) {
 			if (GetField(i, j) < 0) {
-				if(GetField(i, j) == -playerID)
-					for (k = 0; k < ppenguins; k++) {
-						if (GetPeng(k)[0] == i && GetPeng(k)[1] == j)
-							printf("( %d )  ", k);
+                //printf("pole: %d  ", GetField(i,j));
+				if(GetField(i, j) == -playerID){
+					//for (k = 0; k < ppenguins; k++) {
+						//if (GetPeng(k)[0] == i && GetPeng(k)[1] == j)
+							printf(" [%d] ", -GetField(i,j));
 					}else
-					printf("  %d  ", GetField(i, j));
+					printf(" [%d] ", -GetField(i, j));
 			}else
 				printf("  %d  ", GetField(i, j));
 		}
@@ -183,12 +184,12 @@ int PlayerInp(int Time, int* input){
 
 	}
 	else{
-		printf("\nDecide penguin index, way and distance.\n\n");
-		scanf("%d %d %d", &xx, &yy, &xy);
+		printf("\nDecide penguin index, way and distance.\n0 = north-east 1 = east 2 = south-east 3 = south-west 4 = west 5 = north-west \n\n");
+		scanf("%d %d %d", &peng, &way, &dis);
 
-		input[0] = xx;
-		input[1] = yy;
-		input[2] = xy;
+		input[0] = peng;
+		input[1] = way;
+		input[2] = dis;
 
 		return 1;
 	}
@@ -280,21 +281,20 @@ void Exit(char* output){
 }
 
 int GetField(int x, int y){
-	return *(board + y + x);
+   // printf("OwO: '%d' x: %d y: %d ", *(board + y + x), x, y);
+	return *(board + column*y + x);
 }
 
 void SetField(int x, int y, int type){
-	*(board + y + x) = type;
+	*(board + column*y + x) = type;
 }
 
 int GetPoints(int ID){
-    printf("halp %d\n", *(points + ID - 1));
 	return *(points + ID - 1);
 }
 
 void SetPoints(int ID, int amount){
-	*(points + ID - 1) = amount;
-	printf("ustawiamy punktty %d\n",*(points+ID-1));
+	*(points + ID - 1) += amount;
 }
 
 int* GetPeng(int player){
@@ -308,12 +308,13 @@ void Place(int* input){
 
 	for(i = 0; i < ppenguins; i++){
 		printf("%d\n", GetPeng(i)[0]);
-		if(GetPeng(i)[0] == -1){
+		printf("halo?? \n");
+		//if(GetPeng(i)[0] == -1){
 			SetPeng(i, x, y);
 			SetField(x, y, -playerID);
 			SetPoints(playerID, 1);
 			break;
-		}
+		//}
 	}
 }
 
@@ -326,16 +327,15 @@ void Move(int* input) {
 	dir = input[1];
 	value = input[2];
 
-	// Helper variables with position.
 	PrevousPosition[0] = GetPeng(peng)[0];
 	PrevousPosition[1] = GetPeng(peng)[1];
 	Position[0] = PrevousPosition[0];
 	Position[1] = PrevousPosition[1];
 
 	for (i = 0; i < value; i++) {
-		// Changes position by one step.
+		// walks step by step
 		ChangePlace(Position, dir);
-		// Checks if movement is possible.
+		// checks if no problems on way
 		if (CheckPlace(Position))
 			SetPeng(peng, Position[0], Position[1]);
 		else
@@ -414,8 +414,8 @@ void SetPeng(int player, int x, int y){
 int CountPeng(int ActivePlayer){
     int i,j,x=0;
 
-    for(i=0;i<row;i++){
-        for(j=0;j<column;j++){
+    for(i=0;i<=row;i++){
+        for(j=0;j<=column;j++){
             if(GetField(i,j) == -ActivePlayer){
                 x++;
             }
