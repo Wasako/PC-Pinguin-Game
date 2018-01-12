@@ -1,0 +1,38 @@
+# depslib dependency file v1.0
+1513525362 source:d:\dokumenty\nauka\it\sem1\penguins_not_retarded\united.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
+1513584038 source:e:\nauka\it\sem1\penguins_not_retarded\united.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
+1515404792 source:e:\nauka\it\sem1\penguins_not_retarded\order66.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<conio.h>
+
+1515408220 source:e:\nauka\it\sem1\penguins_not_retarded\helpdesk.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
+1515050908 e:\nauka\it\sem1\penguins_not_retarded\helpdesk.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
+1515769323 source:c:\users\janwa\onedrive\dokumenty\github\pc-pinguin-game\penguins_not_retarded\helpdesk.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+
+1515769323 source:c:\users\janwa\onedrive\dokumenty\github\pc-pinguin-game\penguins_not_retarded\order66.c
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	<conio.h>
+
