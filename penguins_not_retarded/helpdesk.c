@@ -168,6 +168,7 @@ void ShowInp(){
 
 int PlayerInp(int Time, int* input){
 	int xx, yy, xy;
+	int peng, way, dis;
 
 	if(Time>0){
 		printf("\nPlace penguin: \n-input (x,y) coordinates\n");
@@ -331,6 +332,7 @@ void Move(int* input) {
 	PrevousPosition[1] = GetPeng(peng)[1];
 	Position[0] = PrevousPosition[0];
 	Position[1] = PrevousPosition[1];
+
 
 	for (i = 0; i < value; i++) {
 		// walks step by step
