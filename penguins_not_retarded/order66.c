@@ -72,16 +72,8 @@ int main(int argc, char** argv) {
 
 
     InpInput(NotBot, PlaceTime, input);
-
-
-
-	if (PlaceTime)
-		Place(input);
-		if(NotBot == 0)
-            goto spintowin;
-	else
-		Move(input);
-
+	
+    goto spintowin;
 
 
 	Exit("./output.txt");
