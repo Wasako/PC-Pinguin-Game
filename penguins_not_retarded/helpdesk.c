@@ -295,14 +295,12 @@ void SetPoints(int ID, int amount){
 }
 
 int GetPeng(int player,int id,int i){
-    printf("rak v%d: %d ", 2*((player-1)*(ppenguins) + id-1) + i,(pengs->cords[2*((player-1)*(ppenguins) + id-1) + i]));
 	return (pengs->cords[2*((player-1)*(ppenguins) + id-1) + i]);
 }
 
 void SetPeng(int player, int id, int x, int y){
     pengs->cords[2*((player-1)*(ppenguins) + id-1)] = x;
     pengs->cords[2*((player-1)*(ppenguins) + id-1)+1] = y;
-    printf("czo tu sie dzieje v%d: %d\n", 2*((player-1)*(ppenguins) + id-1),pengs->cords[2*((player-1)*(ppenguins) + id-1)]);
 }
 
 int CountPeng(int ActivePlayer){
