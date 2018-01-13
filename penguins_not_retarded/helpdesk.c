@@ -240,19 +240,18 @@ int Randomize(int Time, int* input){
 
 void InpInput(int NotBot, int Time, int* input) {
 	int damnit;
-
-	while (1) {
+    int hurr=1;
+	while (hurr == 1) {
 		damnit = (NotBot == 0) ? PlayerInp(Time, input) : Randomize(Time, input);
 
 		if(damnit){
 			if(Time){
                 Place(input);
-                break;
+                hurr =0;
 			}else{
                 Move(input);
-                break;
+                hurr=0;
             }
-            break;
 		}else
 			printf("Invalid input.\n");
 	}
@@ -315,7 +314,7 @@ void SetPoints(int ID, int amount){
 }
 
 int GetPeng(int player,int id,int i){
-	return (pengs->cords[2*(id-1)*(player-1) + i]);
+	return (pengs->cords[2*((player-1)*(ppenguins) + id-1) + i]);
 }
 
 void Place(int* input){
@@ -427,9 +426,9 @@ void SetPeng(int player, int x, int y){
 	*(pengs+player) = *(pengs+player)-1;
 	*/
 	int i;
-	i = 2*(CountPeng(player)-1)*(player-1) ;
-    pengs->cords[i] = x;
-    pengs->cords[i+1] = y;
+	i = (CountPeng(player)-1);
+    pengs->cords[2*((player-1)*(ppenguins) + i-1)] = x;
+    pengs->cords[2*((player-1)*(ppenguins) + i-1)+1] = y;
 }
 
 int CountPeng(int ActivePlayer){
