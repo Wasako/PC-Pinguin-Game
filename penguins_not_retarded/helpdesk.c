@@ -2,12 +2,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+typedef struct{
+    int ID;//player
+    int *cords;//pinguin
+}*penguin;
+
 int players, ppenguins, playerID, row, column, PlaceTime;
 static FILE *inputF;
 static FILE *outputF;
 static int *board;
 static int *points;
-static int *pengs;
+static penguin pengs;
 static int *halp;
 
 static void openF(char* nameF, int type);
@@ -31,13 +36,13 @@ int GetField(int x, int y);
 void SetPoints(int ID, int amount);
 int GetPoints(int ID);
 void SetPeng(int player, int x, int y);
-int* GetPeng(int player);
+int GetPeng(int player, int id, int i);
 void Place(int *input);
 void Move(int *input);
 int CheckPlace(int *place);
 void ChangePlace(int *place, int dir);
 static void MarkPengs();
-void update(int pengID, int *PreviousPosition);
+void update(int pengID, int PreviousPosition[2]);
 int CountPeng(int ActivePlayer);
 
 
@@ -59,7 +64,11 @@ static void closeF(int type){
 }
 
 void memory(){
-    pengs = (int*)calloc(ppenguins * 2, sizeof(int));
+    pengs = calloc(players, sizeof(pengs));
+    int i;
+    for(i=0;i<players;i++){
+        pengs->cords = calloc(ppenguins * 2, sizeof(int));
+    }
 	points = (int*)calloc(players, sizeof(int));
 	board = (int*)calloc(column * row, sizeof(int));
 }
@@ -125,7 +134,7 @@ static void OupPoints(){
 void ShowInp(){
 	int i, j, k;
 
-	printf("\n\n");
+	printf("\n");
     printf("The amount of Players in Game: %d\n", players);
 	printf("The amount of Penguins: %d\n\n", ppenguins);
     printf("Rows: %d\n", row);
@@ -137,10 +146,7 @@ void ShowInp(){
 
 		for (i = 0; i < column; i++) {
 			if (GetField(i, j) < 0) {
-                //printf("pole: %d  ", GetField(i,j));
 				if(GetField(i, j) == -playerID){
-					//for (k = 0; k < ppenguins; k++) {
-						//if (GetPeng(k)[0] == i && GetPeng(k)[1] == j)
 							printf(" [%d] ", -GetField(i,j));
 					}else
 					printf(" [%d] ", -GetField(i, j));
@@ -155,8 +161,8 @@ void ShowInp(){
 
     if(PlaceTime == 0){
         for(i = 0; i < ppenguins; i++)
-        printf("(%d, %d) ", GetPeng(i)[0], GetPeng(i)[1]);
-        printf("\n\n");
+        printf("(%d, %d) ", GetPeng(playerID, i, 0), GetPeng(playerID, i, 1));
+        printf("\n");
     }else{printf("Not all are placed yet!\n");}
 
 	printf("Points: \n");
@@ -168,7 +174,6 @@ void ShowInp(){
 
 int PlayerInp(int Time, int* input){
 	int xx, yy, xy;
-	int peng, way, dis;
 
 	if(Time>0){
 		printf("\nPlace penguin: \n-input (x,y) coordinates\n");
@@ -177,22 +182,23 @@ int PlayerInp(int Time, int* input){
 		input[0]=xx;
 		input[1]=yy;
 
-		if(GetField(xx, yy) == 1)
+		if(GetField(xx, yy) == 1){
 			return 1;
 			//Place(input);
-		else
+		}else
 			return 0;
 
 	}
 	else{
-		printf("\nDecide penguin index, way and distance.\n0 = north-east 1 = east 2 = south-east 3 = south-west 4 = west 5 = north-west \n\n");
-		scanf("%d %d %d", &peng, &way, &dis);
+		printf("\nDecide penguin index, way and distance.\n0 = north-east 1 = east 2 = south-east 3 = south-west 4 = west 5 = north-west \n");
+		scanf("%d %d %d", &xx,&yy, &xy);
 
-		input[0] = peng;
-		input[1] = way;
-		input[2] = dis;
+		input[0] = xx;
+		input[1] = yy;
+		input[2] = xy;
 
-		return 1;
+        if(xx<=ppenguins && yy>=0 && yy <=5)
+            return 1;
 	}
 
 	return 0;
@@ -218,8 +224,8 @@ int Randomize(int Time, int* input){
 		input[0] = rand() % ppenguins;
 		for(j = 0; j < ppenguins; j++)
 			for(i = 0; i < 50; i++){
-				pos[0] = GetPeng(input[0])[0];
-				pos[1] = GetPeng(input[0])[1];
+				pos[0] = GetPeng(playerID, input[0], 0);//(input[0])[0];
+				pos[1] = GetPeng(playerID, input[0], 0);//(input[0])[1];
 				input[1] = rand() % 6;
 				input[2] = rand() % 5;
 				ChangePlace(pos, input[1]);
@@ -238,9 +244,16 @@ void InpInput(int NotBot, int Time, int* input) {
 	while (1) {
 		damnit = (NotBot == 0) ? PlayerInp(Time, input) : Randomize(Time, input);
 
-		if(damnit)
-			break;
-		else
+		if(damnit){
+			if(Time){
+                Place(input);
+                break;
+			}else{
+                Move(input);
+                break;
+            }
+            break;
+		}else
 			printf("Invalid input.\n");
 	}
 
@@ -248,7 +261,7 @@ void InpInput(int NotBot, int Time, int* input) {
 }
 
 
-
+/*
 static void MarkPengs(){
 	int i, j, mark;
 
@@ -261,7 +274,7 @@ static void MarkPengs(){
 
 	for(; mark < ppenguins; mark++)
 		SetPeng(mark, -1, -1);
-}
+}*/
 
 void Load(char* input){
 	openF(input, 0);
@@ -269,7 +282,7 @@ void Load(char* input){
 	memory();
     InpPoints();
 	InpBoard();
-	MarkPengs();
+	//MarkPengs();
 	closeF(0);
 }
 
@@ -291,15 +304,18 @@ void SetField(int x, int y, int type){
 }
 
 int GetPoints(int ID){
+    printf("OwO : %d\n", *(points + ID - 1));
 	return *(points + ID - 1);
 }
 
 void SetPoints(int ID, int amount){
-	*(points + ID - 1) += amount;
+    printf("OwO1?: %d\n", *(points + ID - 1));
+	return *(points + ID - 1) += amount;
+    printf("OwO2?: %d\n", *(points + ID - 1));
 }
 
-int* GetPeng(int player){
-	return (player*2 + pengs);
+int GetPeng(int player,int id,int i){
+	return (pengs->cords[2*(id-1)*(player-1) + i]);
 }
 
 void Place(int* input){
@@ -307,16 +323,14 @@ void Place(int* input){
 	x = input[0];
 	y = input[1];
 
-	for(i = 0; i < ppenguins; i++){
-		printf("%d\n", GetPeng(i)[0]);
-		printf("halo?? \n");
+	//for(i = 0; i < ppenguins; i++){
 		//if(GetPeng(i)[0] == -1){
-			SetPeng(i, x, y);
-			SetField(x, y, -playerID);
-			SetPoints(playerID, 1);
-			break;
+        SetPeng(playerID, x, y);
+        SetField(x, y, -playerID);
+        SetPoints(playerID, 1);
+        //break;
 		//}
-	}
+	//}
 }
 
 void Move(int* input) {
@@ -328,11 +342,10 @@ void Move(int* input) {
 	dir = input[1];
 	value = input[2];
 
-	PrevousPosition[0] = GetPeng(peng)[0];
-	PrevousPosition[1] = GetPeng(peng)[1];
+	PrevousPosition[0] = GetPeng(playerID, peng, 0);
+	PrevousPosition[1] = GetPeng(playerID, peng, 1);
 	Position[0] = PrevousPosition[0];
 	Position[1] = PrevousPosition[1];
-
 
 	for (i = 0; i < value; i++) {
 		// walks step by step
@@ -344,7 +357,7 @@ void Move(int* input) {
 			break;
 	}
 
-	if(GetPeng(peng)[0] != PrevousPosition[0] || GetPeng(peng)[1] != PrevousPosition[1])
+	if(GetPeng(playerID, peng, 0) != PrevousPosition[0] || (playerID, peng, 1) != PrevousPosition[1])
 		update(peng, PrevousPosition);
 }
 
@@ -408,9 +421,15 @@ int CheckPlace(int* place){
 
 
 void SetPeng(int player, int x, int y){
+	/*
 	*(player*2 + pengs) = x;
 	*(player*2 + pengs + 1) = y;
 	*(pengs+player) = *(pengs+player)-1;
+	*/
+	int i;
+	i = 2*(CountPeng(player)-1)*(player-1) ;
+    pengs->cords[i] = x;
+    pengs->cords[i+1] = y;
 }
 
 int CountPeng(int ActivePlayer){
@@ -428,20 +447,26 @@ int CountPeng(int ActivePlayer){
 }
 
 
-void update(int pengID, int* PreviousPosition) {
-	int fish, points;
-	int* place;
+void update(int pengID, int PreviousPosition[2]) {
+	int fish;
+	int place[4];
+	place[0]=PreviousPosition[0];
+	place[1]=PreviousPosition[1];
 
-	place = GetPeng(pengID);
-	fish = GetField(place[0], place[1]);
-	points = GetPoints(playerID);
+	place[2] = GetPeng(playerID, pengID, 0);
+	place[3] = GetPeng(playerID, pengID, 1);
+	fish = GetField(place[2], place[3]);
+	if(fish > 0){
 
-	printf("%d\n", GetField(PreviousPosition[0], PreviousPosition[1]));
+	printf("ryby naow: '%d'\n",fish);
+
+	//printf("%d\n", GetField(PreviousPosition[0], PreviousPosition[1]));
 	SetField(PreviousPosition[0], PreviousPosition[1], 0);
-	SetField(place[0], place[1], -playerID);
-	printf("%d\n", GetField(PreviousPosition[0], PreviousPosition[1]));
+	SetField(place[2], place[3], -playerID);
+	//printf("%d\n", GetField(PreviousPosition[0], PreviousPosition[1]));
 
-	SetPoints(playerID, points + fish);
+	SetPoints(playerID, fish);
+	}
 }
 
 
