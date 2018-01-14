@@ -1,3 +1,5 @@
+//MADE BY ALEKSANDRA WYROSTKIEWICZ
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -253,7 +255,9 @@ void InpInput(int NotBot, int Time, int* input) {
                 hurr=0;
             }
 		}else
+            if(NotBot==0){
 			printf("Invalid input.\n");
+            }
 	}
 
 
