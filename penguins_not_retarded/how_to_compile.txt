@@ -1,0 +1,7 @@
+in command line parameter or as a project arguments input 4 things:
+0/1 - decide to play player mode (0) or bot mode (1)
+1/.../n - decide starting player
+first_file_name.txt - name of file with input
+secon_file_name.txt - name of file to save output (can be same i guess)
+
+(everything isolated by spaces or sth simillar)
