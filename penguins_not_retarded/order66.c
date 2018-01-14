@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 
 
 	if (PlaceTime)
-		Place(input);
+		//Place(input);
 		if(NotBot == 0)
             goto spintowin;
 	else

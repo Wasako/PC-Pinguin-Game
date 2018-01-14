@@ -134,13 +134,25 @@ static void OupPoints(){
 void ShowInp(){
 	int i, j, k;
 
+	system("CLS");
 	printf("\n");
     printf("The amount of Players in Game: %d\n", players);
 	printf("The amount of Penguins: %d\n\n", ppenguins);
     printf("Rows: %d\n", row);
 	printf("Columns: %d\n\n", column);
-    printf("Board: \n");
+    printf("Board: \n  _");
+    for(i=0; i< column; i++)
+    {
+        printf("__%d_|", i);
+
+    }
+
+
+    printf("\n");
+
+
 	for (j = 0; j < row; j++) {
+        printf("%d|", j);
 		if (j % 2)
 			printf("  ");
 
