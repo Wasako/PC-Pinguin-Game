@@ -1,3 +1,5 @@
+//MADE BY ALEKSANDRA WYROSTKIEWICZ
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -35,7 +37,7 @@ void SetField(int x, int y, int type);
 int GetField(int x, int y);
 void SetPoints(int ID, int amount);
 int GetPoints(int ID);
-void SetPeng(int player, int x, int y);
+void SetPeng(int player, int id, int x, int y);
 int GetPeng(int player, int id, int i);
 void Place(int *input);
 void Move(int *input);
@@ -65,10 +67,10 @@ static void closeF(int type){
 
 void memory(){
     pengs = calloc(players, sizeof(pengs));
-    int i;
-    for(i=0;i<players;i++){
+    //int i;
+    //for(i=0;i<players;i++){
         pengs->cords = calloc(ppenguins * 2, sizeof(int));
-    }
+    //}
 	points = (int*)calloc(players, sizeof(int));
 	board = (int*)calloc(column * row, sizeof(int));
 }
@@ -172,8 +174,8 @@ void ShowInp(){
 	printf("Pengus' coordinates: ");
 
     if(PlaceTime == 0){
-        for(i = 0; i < ppenguins; i++)
-        printf("(%d, %d) ", GetPeng(playerID, i, 0), GetPeng(playerID, i, 1));
+        for(i = 1; i <= ppenguins; i++)
+            printf("%d:(%d, %d) ", i, GetPeng(playerID, i, 0), GetPeng(playerID, i, 1));
         printf("\n");
     }else{printf("Not all are placed yet!\n");}
 
@@ -265,27 +267,13 @@ void InpInput(int NotBot, int Time, int* input) {
                 hurr=0;
             }
 		}else
+            if(NotBot==0){
 			printf("Invalid input.\n");
+            }
 	}
 
 
 }
-
-
-/*
-static void MarkPengs(){
-	int i, j, mark;
-
-	mark = 0;
-
-	for (j = 0; j < row; j++)
-		for (i = 0; i < column; i++)
-			if (GetField(i, j) == -playerID)
-				SetPeng(mark++, i, j);
-
-	for(; mark < ppenguins; mark++)
-		SetPeng(mark, -1, -1);
-}*/
 
 void Load(char* input){
 	openF(input, 0);
@@ -315,28 +303,46 @@ void SetField(int x, int y, int type){
 }
 
 int GetPoints(int ID){
-    printf("OwO : %d\n", *(points + ID - 1));
 	return *(points + ID - 1);
 }
 
 void SetPoints(int ID, int amount){
-    printf("OwO1?: %d\n", *(points + ID - 1));
 	return *(points + ID - 1) += amount;
-    printf("OwO2?: %d\n", *(points + ID - 1));
 }
 
 int GetPeng(int player,int id,int i){
 	return (pengs->cords[2*((player-1)*(ppenguins) + id-1) + i]);
 }
 
+void SetPeng(int player, int id, int x, int y){
+    pengs->cords[2*((player-1)*(ppenguins) + id-1)] = x;
+    pengs->cords[2*((player-1)*(ppenguins) + id-1)+1] = y;
+}
+
+int CountPeng(int ActivePlayer){
+    int i,j,x=0;
+
+    for(i=0;i<=row;i++){
+        for(j=0;j<=column;j++){
+            if(GetField(i,j) == -ActivePlayer){
+                x++;
+            }
+        }
+    }
+    return x;
+
+}
+
+
 void Place(int* input){
 	int i, x, y;
 	x = input[0];
 	y = input[1];
+	int id = ppenguins-PlaceTime+1;
 
 	//for(i = 0; i < ppenguins; i++){
 		//if(GetPeng(i)[0] == -1){
-        SetPeng(playerID, x, y);
+        SetPeng(playerID, id, x, y);
         SetField(x, y, -playerID);
         SetPoints(playerID, 1);
         //break;
@@ -363,12 +369,12 @@ void Move(int* input) {
 		ChangePlace(Position, dir);
 		// checks if no problems on way
 		if (CheckPlace(Position))
-			SetPeng(peng, Position[0], Position[1]);
+			SetPeng(playerID, peng, Position[0], Position[1]);
 		else
 			break;
 	}
 
-	if(GetPeng(playerID, peng, 0) != PrevousPosition[0] || (playerID, peng, 1) != PrevousPosition[1])
+	if(GetPeng(playerID, peng, 0) != PrevousPosition[0] || GetPeng(playerID, peng, 1) != PrevousPosition[1])
 		update(peng, PrevousPosition);
 }
 
@@ -429,34 +435,6 @@ int CheckPlace(int* place){
 	else
 		return 0;
 }
-
-
-void SetPeng(int player, int x, int y){
-	/*
-	*(player*2 + pengs) = x;
-	*(player*2 + pengs + 1) = y;
-	*(pengs+player) = *(pengs+player)-1;
-	*/
-	int i;
-	i = (CountPeng(player)-1);
-    pengs->cords[2*((player-1)*(ppenguins) + i-1)] = x;
-    pengs->cords[2*((player-1)*(ppenguins) + i-1)+1] = y;
-}
-
-int CountPeng(int ActivePlayer){
-    int i,j,x=0;
-
-    for(i=0;i<=row;i++){
-        for(j=0;j<=column;j++){
-            if(GetField(i,j) == -ActivePlayer){
-                x++;
-            }
-        }
-    }
-    return x;
-
-}
-
 
 void update(int pengID, int PreviousPosition[2]) {
 	int fish;
